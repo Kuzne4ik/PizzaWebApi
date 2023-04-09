@@ -7,17 +7,13 @@ namespace PizzaWebApi.Web.ExceptionFilters
     /// <summary>
     /// Catch OrderStateConflictException and create HTTP 409 InternalFailure response with error message
     /// </summary>
-    public class OrderStateConflictExceptionFilter : IActionFilter, IOrderedFilter
+    public class OrderStateConflictExceptionFilter : IExceptionFilter
     {
         /// <summary>
-        /// Переопределение порядка исполнения
-        /// -1 исполняется первым, далее по нарастающей
+        /// Ловить исключения типа OrderStateConflictException 
         /// </summary>
-        public int Order => int.MaxValue;
-
-        public void OnActionExecuting(ActionExecutingContext context) { }
-
-        public void OnActionExecuted(ActionExecutedContext context)
+        /// <param name="context"></param>
+        public void OnException(ExceptionContext context)
         {
             if (context.Exception is OrderStateConflictException ex)
             {

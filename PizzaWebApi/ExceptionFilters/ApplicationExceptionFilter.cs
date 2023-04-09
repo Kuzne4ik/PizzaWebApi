@@ -6,17 +6,12 @@ namespace PizzaWebApi.Web.ExceptionFilters
     /// <summary>
     /// Catch ApplicationException and create HTTP 500 InternalFailure response with error message
     /// </summary>
-    public class ApplicationExceptionFilter : IActionFilter, IOrderedFilter
+    public class ApplicationExceptionFilter : IExceptionFilter
     {
         /// <summary>
-        /// Переопределение порядка исполнения
-        /// -1 исполняется первым, далее по нарастающей
+        /// Ловить исключения типа ApplicationException 
         /// </summary>
-        public int Order => int.MaxValue;
-
-        public void OnActionExecuting(ActionExecutingContext context) { }
-
-        public void OnActionExecuted(ActionExecutedContext context)
+        public void OnException(ExceptionContext context)
         {
             if (context.Exception is ApplicationException ex)
             {

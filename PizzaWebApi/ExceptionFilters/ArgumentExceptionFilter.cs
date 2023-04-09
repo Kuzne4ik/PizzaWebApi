@@ -9,11 +9,8 @@ namespace PizzaWebApi.Web.ExceptionFilters
     public class ArgumentExceptionFilter : IExceptionFilter
     {
         /// <summary>
-        /// Переопределение порядка исполнения
-        /// -1 исполняется первым, далее по нарастающей
+        /// Ловить исключения типа ArgumentException 
         /// </summary>
-        public int Order => int.MaxValue;
-
         public void OnException(ExceptionContext context)
         {
             if (context.Exception is ArgumentException ex)
