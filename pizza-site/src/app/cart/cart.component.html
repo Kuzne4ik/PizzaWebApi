@@ -1,0 +1,101 @@
+<h2>Cart</h2>
+
+<p class="error" *ngIf="error; else cartItemsBlock" >{{error}}</p>
+
+<ng-template #cartItemsBlock>
+    <div *ngIf="!isBusy; else loadingBlock">
+      <div *ngIf="cartItems.length; else nocartItems">
+        <div class="card" *ngFor="let cartItem of cartItems">
+            <h4>
+                <a
+                    [title]="cartItem.product.name + ' details'"
+                    [routerLink]="['/products', cartItem.product.id]">
+                    {{cartItem.product.title | titlecase}}
+                    </a>
+            </h4>
+            <p>
+                <span>{{cartItem.quantity }} x {{cartItem.product.price | currency }}</span>
+                <button type="button" class="button" (click)="addOneProduct(cartItem.product.id)">+</button>
+                <button type="button" class="button" (click)="removeOneProduct(cartItem.product.id)" [disabled]="cartItem.quantity == 1">-</button>
+                <button type="button" class="button" (click)="deleteCartItem(cartItem.id)">Remove</button>
+            </p>
+        </div>
+      </div>
+      <ng-template #nocartItems>
+        <p>No one...</p>
+      </ng-template>
+    </div>
+    <ng-template #loadingBlock>
+      <p>Loading...</p>
+    </ng-template>
+</ng-template>
+<span>Total: {{total | currency}}</span>
+<h2>Order info:</h2>
+<form [formGroup]="checkoutForm" (ngSubmit)="onSubmit()">
+  <div>
+    <label for="lastName">
+      Last name
+    </label>
+    <input id="lastName" type="text" formControlName="lastName" placeholder="Last name">
+    <div *ngIf="lastName?.invalid && lastName?.touched" class="validation">
+      <small *ngIf="lastName?.errors?.['required']">
+          Last name required
+      </small>
+    </div>
+  </div>
+  <div>
+    <label for="firstName">
+      First name
+    </label>
+    <input id="firstName" type="text" formControlName="firstName" placeholder="First name">
+    <div *ngIf="firstName?.invalid && firstName?.touched" class="validation">
+      <small *ngIf="firstName?.errors?.['required']">
+        First name required
+      </small>
+    </div>
+  </div>
+  <div>
+    <label for="surName">
+      Surname
+    </label>
+    <input id="surName" type="text" formControlName="surName" placeholder="Surname">
+  </div>
+  <div>
+    <label for="phone">
+      Phone
+    </label>
+    <input id="phone" type="text" formControlName="phone" placeholder="+71234445566">
+    <div *ngIf="phone?.invalid && phone?.touched" class="validation">
+      <small *ngIf="phone?.errors?.['required']">
+        Phone required
+      </small>
+    </div>
+  </div>
+  <div>
+    <label for="email">
+      E-mail
+    </label>
+    <input id="email" type="text" formControlName="email"
+      placeholder="e@mail.ru">
+      <div *ngIf="email?.invalid && email?.touched" class="validation">
+        <small *ngIf="email?.errors?.['required']">
+            E-mail required
+        </small>
+        <small *ngIf="email?.errors?.['email']">
+            E-mail is wrong
+        </small>
+      </div>
+  </div>
+  <div>
+    <label for="address">
+      Address
+    </label>
+    <input id="address" type="text" formControlName="address"
+      placeholder="Address">
+  </div>
+
+  <button type="button" class="submit" [disabled]="checkoutForm.invalid">Purchase</button>
+
+</form>
+
+

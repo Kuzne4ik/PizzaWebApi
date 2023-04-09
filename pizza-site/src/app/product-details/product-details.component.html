@@ -1,0 +1,15 @@
+<h2>Product Details</h2>
+<p class="error" *ngIf="error; else cartItemsBlock" >{{error}}</p>
+<ng-template #cartItemsBlock>
+    <div *ngIf="product;else productidnotfound">
+        <h3>{{ product.title }}</h3>
+        <h4>Name: {{ product.name }}</h4>
+        <h4>Price: {{ product.price | currency }}</h4>
+        <h4>Description:</h4>
+        <p>{{ product.description }}</p>
+        <button type="button" (click)="addToCart(product)">Buy</button>
+    </div>
+    <ng-template #productidnotfound>
+        <p>Product not found</p>
+    </ng-template>
+</ng-template>

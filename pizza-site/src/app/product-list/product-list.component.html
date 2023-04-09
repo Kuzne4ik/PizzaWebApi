@@ -1,0 +1,46 @@
+<h2>Products</h2>
+
+<div>
+  <label>
+    Category
+  </label>
+  <select name="category" [(ngModel)]="selectedCategoryId" (ngModelChange)="onCategoryChanged($event)">
+    <option *ngFor="let category of categories" [ngValue]="category.id">
+      {{category.title}}
+    </option>
+  </select>
+</div>
+
+<button type="button" (click)="addProduct()">Create product</button>
+
+<p class="error" *ngIf="error; else productsBlock" >{{error}}</p>
+<ng-template #productsBlock>
+    <div *ngIf="!isBusy; else loadingBlock">
+      <div *ngIf="products.length > 0; else noproducts">
+        <div class="card" *ngFor="let product of products">
+          <div>
+              <h4>
+                <a  
+                  [title]="product.name + ' details'"
+                  [routerLink]="['/products', product.id]">
+                  {{product.title | titlecase}}
+                </a>
+              </h4>
+              <small>{{product.price | currency }}</small>
+              <p>
+                <span>{{product.description}}</span>
+                <span>
+                  <button type="button" (click)="deleteProduct(product.id)">Delete</button>
+                </span>
+            </p>
+          </div>
+        </div>
+      </div>
+      <ng-template #noproducts>
+        <p>No one...</p>
+      </ng-template>
+    </div>
+    <ng-template #loadingBlock>
+      <p>Loading...</p>
+    </ng-template>
+</ng-template>

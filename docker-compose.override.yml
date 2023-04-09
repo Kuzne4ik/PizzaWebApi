@@ -1,0 +1,11 @@
+version: '3.4'
+
+services:
+  pizzawebapi.web:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__MsSQLOnDockerConnection=Server=mssql_docker_db;Database=pizzadb;User=sa;Password=Secret12345;Trusted_Connection=false;
+      - ASPNETCORE_URLS=http://+:80
+      - ASPNETCORE_HTTP_PORT=8009
+    volumes:
+      - ~/.aspnet/https:/https:ro
