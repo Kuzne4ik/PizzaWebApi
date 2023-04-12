@@ -15,7 +15,14 @@ namespace PizzaWebApi.Web.ExceptionFilters
         {
             if (context.Exception is ApplicationException ex)
             {
-                context.Result = new ObjectResult(ex.Message)
+                var error = new ProblemDetails
+                {
+                    Title = "An error occurred",
+                    Detail = ex.Message,
+                    Status = 500,
+                    Type = "https://httpstatuses.com/500"
+                };
+                context.Result = new ObjectResult(error)
                 {
                     StatusCode = 500
                 };

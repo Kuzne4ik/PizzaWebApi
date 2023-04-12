@@ -17,7 +17,14 @@ namespace PizzaWebApi.Web.ExceptionFilters
         {
             if (context.Exception is OrderStateConflictException ex)
             {
-                context.Result = new ObjectResult(ex.Message)
+                var error = new ProblemDetails
+                {
+                    Title = "An error occurred",
+                    Detail = ex.Message,
+                    Status = 409,
+                    Type = "https://httpstatuses.com/409"
+                };
+                context.Result = new ObjectResult(error)
                 {
                     StatusCode = 409
                 };

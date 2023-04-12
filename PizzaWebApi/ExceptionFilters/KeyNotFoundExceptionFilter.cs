@@ -15,7 +15,14 @@ namespace PizzaWebApi.Web.ExceptionFilters
         {
             if (context.Exception is KeyNotFoundException ex)
             {
-                context.Result = new ObjectResult(ex.Message)
+                var error = new ProblemDetails
+                {
+                    Title = "An error occurred",
+                    Detail = ex.Message,
+                    Status = 400,
+                    Type = "https://httpstatuses.com/400"
+                };
+                context.Result = new ObjectResult(error)
                 {
                     StatusCode = 400
                 };
