@@ -4,11 +4,11 @@ using PizzaWebApi.Web.Filters.ActionFilters;
 namespace PizzaWebApi.Web.Attributes
 {
     /// <summary>
-    /// Check is exists cart by id
-    /// Use with EnsureCartExistsActionFilter only. Constructor make factory for EnsureCartExistsActionFilter DI factory access.
+    /// Check is exists Category by id
+    /// Use with EnsureCategoryExistsActionFilter only. Constructor make factory for EnsureCategoryExistsActionFilter DI factory access.
     /// </summary>
     /// <remarks>
-    /// EnsureCartExistsAttribute это связка для EnsureCartExistsActionFilter,
+    /// EnsureCategoryExistsAttribute это связка для EnsureCategoryExistsActionFilter,
     /// чтобы использовать конейнер зависимостей корректным образом
     /// Это наследник TypeFilterAttribute этот класс-атрибут используется специально для получения зависимостей
     /// из контейнера внедрения зависимостей.
@@ -17,7 +17,7 @@ namespace PizzaWebApi.Web.Attributes
     /// экземпляр для жизненного цикла вашего приложения.
     /// В итоге получается вызов объектов с жизненным циклом transient и scoped в объекте singltone, что нарушает их жизненный цикл.
     /// Чтобы не применять антипатерн внедрения зависимостей, применяется 
-    /// Пример антипатерна: var service = (ICartRepository) context.HttpContext.RequestServices.GetService(typeof(ICartRepository));
+    /// Пример антипатерна: var service = (ICategoryRepository) context.HttpContext.RequestServices.GetService(typeof(ICategoryRepository));
     /// TypeFilterAttribute или ServiceFilterAttribute имеет конструктор куда передается тип фильтра как аргумент, за счет чего фильтр получает корректный доступ к
     /// к контейнеру внедрения зависимостей (фабрика).
     /// Когда вызывается действие, декорированное атрибутом EnsureRecipe-ExistsAttribute,
@@ -25,12 +25,12 @@ namespace PizzaWebApi.Web.Attributes
     /// бута.Он создает новый экземпляр EnsureRecipeExistsFilter и использует
     /// контейнер внедрения зависимостей для заполнения зависимостей
     /// </remarks>
-    public class EnsureCartExistsAttribute : ServiceFilterAttribute
+    public class EnsureCategoryExistsAttribute : ServiceFilterAttribute
     {
         /// <summary>
         /// TypeFilterAttribute через базовый конструктор передает тип фильтра как аргумент для
         /// организации доступа к DI контейнеру
         /// </summary>
-        public EnsureCartExistsAttribute() : base(typeof(EnsureCartExistsActionFilter)) { }
+        public EnsureCategoryExistsAttribute() : base(typeof(EnsureCategoryExistsActionFilter)) { }
     }
 }

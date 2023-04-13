@@ -87,9 +87,7 @@ namespace PizzaWebApi.Infrastructure.Services
         public async Task<ProductDTO> GetByIdAsync(int id)
         {
             _logger.LogInformation($"{nameof(GetByIdAsync)} run");
-            if (!await ProductIsExistById(id))
-                throw new KeyNotFoundException($"The Product {id} not found");
-
+            
             try
             {
                 var product = await _productRepository.FindByConditionQuery(t => t.Id == id).SingleAsync();
@@ -169,8 +167,6 @@ namespace PizzaWebApi.Infrastructure.Services
         public async Task<bool> DeleteAsync(int id)
         {
             _logger.LogInformation($"{nameof(DeleteAsync)} run");
-            if (!await ProductIsExistById(id))
-                throw new KeyNotFoundException($"The Product {id} not found");
             
             try
             {
@@ -184,7 +180,7 @@ namespace PizzaWebApi.Infrastructure.Services
             }
         }
 
-        private async Task<bool> ProductIsExistById(int id)
+        public async Task<bool> ProductIsExistById(int id)
         {
             _logger.LogInformation($"{nameof(ProductIsExistById)} run");
             try

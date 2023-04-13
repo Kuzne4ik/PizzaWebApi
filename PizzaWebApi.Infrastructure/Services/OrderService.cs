@@ -11,7 +11,6 @@ using PizzaWebApi.Core.Models;
 using PizzaWebApi.Core.Requests;
 using PizzaWebApi.Core.Response;
 using PizzaWebApi.Infrastructure.Mediators.Notifications;
-using PizzaWebApi.SharedKernel.Interfaces;
 
 namespace PizzaWebApi.Infrastructure.Services
 {
@@ -185,10 +184,6 @@ namespace PizzaWebApi.Infrastructure.Services
         public async Task<bool> SetOrderCompletedAsync(int orderId)
         {
             _logger.LogInformation($"{nameof(SetOrderCompletedAsync)} run");
-            if(!await OrderIsExistById(orderId))
-            {
-                throw new KeyNotFoundException($"The Order {orderId} not found");
-            }
 
             Order order;
             try 
@@ -226,10 +221,7 @@ namespace PizzaWebApi.Infrastructure.Services
         public async Task<OrderDTO> GetByIdAsync(int id)
         {
             _logger.LogInformation($"{nameof(GetByIdAsync)} run");
-            if (!await OrderIsExistById(id))
-            {
-                throw new KeyNotFoundException($"The Order {id} not found");
-            }
+            
             try
             {
                 return await _orderRepository.FindByConditionQuery(t => t.Id == id).ProjectToType<OrderDTO>().SingleOrDefaultAsync();
@@ -241,7 +233,13 @@ namespace PizzaWebApi.Infrastructure.Services
             }
         }
 
-        private async Task<bool> OrderIsExistById(int id)
+        /// <summary>
+        /// Order is exists by ID
+        /// </summary>
+        /// <param name="id">Order ID</param>
+        /// <returns>Is exists</returns>
+        /// <exception cref="ApplicationException"></exception>
+        public async Task<bool> OrderIsExistById(int id)
         {
             _logger.LogInformation($"{nameof(OrderIsExistById)} run");
             try

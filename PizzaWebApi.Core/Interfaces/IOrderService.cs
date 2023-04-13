@@ -13,5 +13,7 @@ namespace PizzaWebApi.Core.Interfaces
         Task<int> CheckoutAsync(int cartId, OrderDetailsDTO orderDetails);
 
         Task<bool> SetOrderCompletedAsync(int orderId);
+
+        Task<bool> OrderIsExistById(int id);
     }
 }

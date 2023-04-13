@@ -17,5 +17,7 @@ namespace PizzaWebApi.Core.Interfaces
         Task<bool> UpdateAsync(ProductDTO category);
 
         Task<bool> DeleteAsync(int id);
+
+        Task<bool> ProductIsExistById(int id);
     }
 }

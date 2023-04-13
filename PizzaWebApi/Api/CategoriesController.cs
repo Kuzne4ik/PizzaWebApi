@@ -5,6 +5,7 @@ using PizzaWebApi.Core.Interfaces;
 using PizzaWebApi.Core.ApiModels;
 using PizzaWebApi.Core.Response;
 using PizzaWebApi.Core.Requests;
+using PizzaWebApi.Web.Attributes;
 
 namespace PizzaWebApi.Web.Api
 {
@@ -29,8 +30,8 @@ namespace PizzaWebApi.Web.Api
             return _categoryService.GetAllAsync(searhCriteriaRequest);
         }
 
+        [HttpPost("{categoryId:int}/products/search", Name = "SearchCategoryProducts"), EnsureCategoryExists]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(SearchResult<ProductDTO>))]
-        [HttpPost("{categoryId:int}/products/search", Name = "SearchCategoryProducts")]
         public Task<SearchResult<ProductDTO>> GetCategoryProductsAsync(int categoryId, [FromBody] SearchCriteriaRequest searhCriteriaRequest)
         {
             return _productService.GetCategoryProductsAsync(categoryId, searhCriteriaRequest);
@@ -40,7 +41,7 @@ namespace PizzaWebApi.Web.Api
         /// Get Category by Id
         /// </summary>
         /// <param name="id">Category ID</param>
-        [HttpGet("{id}", Name = "GetCategoryById")]
+        [HttpGet("{id}", Name = "GetCategoryById"), EnsureCategoryExists]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CategoryDTO))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public Task<CategoryDTO> GetAsync(int id)
@@ -54,7 +55,6 @@ namespace PizzaWebApi.Web.Api
         /// <param name="categoryDTO"></param>
         /// <returns>A newly created Category</returns>
         /// <response code="201">Returns the newly created item</response>
-        /// <exception cref="DbUpdateException"></exception>
         [HttpPost(Name = "CreateCategory")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CategoryDTO))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -67,8 +67,6 @@ namespace PizzaWebApi.Web.Api
         /// Update Category
         /// </summary>
         /// <param name="categoryDTO"></param>
-        /// <exception cref="KeyNotFoundException"></exception>
-        /// <exception cref="DbUpdateException"></exception>
         [HttpPut(Name = "UpdateCategory")]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public Task<bool> Edit([FromBody] CategoryDTO categoryDTO)
@@ -81,9 +79,8 @@ namespace PizzaWebApi.Web.Api
         /// </summary>
         /// <param name="id">Category ID</param>
         /// <returns>Sucess</returns>
-        /// <exception cref="KeyNotFoundException"></exception>
-        [HttpDelete("{id:int}", Name = "DeleteCategory")]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [HttpDelete("{id:int}", Name = "DeleteCategory"), EnsureCategoryExists]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public Task<bool> Delete(int id)
         {
             return _categoryService.DeleteAsync(id);

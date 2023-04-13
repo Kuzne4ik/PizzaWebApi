@@ -30,13 +30,13 @@ namespace PizzaWebApi.Web.Api
         /// <summary>
         /// Get Order by Id
         /// </summary>
-        /// <param name="id">Product ID</param>
-        [HttpGet("{id}", Name = "GetOrders")]
+        /// <param name="orderId">Product ID</param>
+        [HttpGet("{orderId}", Name = "GetOrder"), EnsureOrderExists]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(OrderDTO))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public Task<OrderDTO> GetAsync(int id)
+        public Task<OrderDTO> GetAsync(int orderId)
         {
-            return _orderService.GetByIdAsync(id);
+            return _orderService.GetByIdAsync(orderId);
         }
 
         /// <summary>
@@ -56,12 +56,12 @@ namespace PizzaWebApi.Web.Api
         /// <summary>
         /// Set Order State to Complete
         /// </summary>
-        /// <param name="id">Order ID</param>
+        /// <param name="orderId">Order ID</param>
         /// <returns></returns>
-        [HttpPut("{id}/complete", Name = "SetOrderToComplete")]
-        public Task<bool> SetOrderComplete(int id)
+        [HttpPut("{orderId}/complete", Name = "SetOrderToComplete"), EnsureOrderExists]
+        public Task<bool> SetOrderComplete(int orderId)
         {
-            return _orderService.SetOrderCompletedAsync(id);
+            return _orderService.SetOrderCompletedAsync(orderId);
         }
     }
 }

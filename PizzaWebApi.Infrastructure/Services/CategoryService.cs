@@ -4,7 +4,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using PizzaWebApi.Core.Interfaces;
 using PizzaWebApi.Core.Models;
-using PizzaWebApi.SharedKernel.Interfaces;
 using PizzaWebApi.Core.ApiModels;
 using PizzaWebApi.Core.Requests;
 using PizzaWebApi.Core.Response;
@@ -57,10 +56,6 @@ namespace PizzaWebApi.Infrastructure.Services
         public async Task<CategoryDTO> GetByIdAsync(int id)
         {
             _logger.LogInformation($"{nameof(GetByIdAsync)} run");
-            if (!await CategoryIsExistById(id))
-            {
-                throw new KeyNotFoundException($"The Category {id} not found");
-            }
             try
             {
                 var category = await _categoryRepository.FindByConditionQuery(t => t.Id == id).SingleAsync();
@@ -111,10 +106,6 @@ namespace PizzaWebApi.Infrastructure.Services
         public async Task<bool> UpdateAsync(CategoryDTO categoryDTO)
         {
             _logger.LogInformation($"{nameof(UpdateAsync)} run");
-            if (!await CategoryIsExistById(categoryDTO.Id))
-            {
-                throw new KeyNotFoundException($"The Category {categoryDTO.Id} not found");
-            }
             try
             {
                 return await _categoryRepository.UpdateAsync(categoryDTO.Adapt<Category>());
@@ -134,10 +125,7 @@ namespace PizzaWebApi.Infrastructure.Services
         public async Task<bool> DeleteAsync(int id)
         {
             _logger.LogInformation($"{nameof(DeleteAsync)} run");
-            if (!await CategoryIsExistById(id))
-            {
-                throw new KeyNotFoundException($"The Category {id} not found");
-            }
+            
             try
             {
                 var category = await _categoryRepository.FindByIdAsync(id);
@@ -150,11 +138,11 @@ namespace PizzaWebApi.Infrastructure.Services
             }
         }
 
-        private async Task<bool> CategoryIsExistById(int id)
+        public async Task<bool> CategoryIsExistById(int id)
         {
             _logger.LogInformation($"{nameof(CategoryIsExistById)} run");
-            try 
-            { 
+            try
+            {
                 return await _categoryRepository.AnyAsync(t => t.Id == id);
             }
             catch (Exception ex)

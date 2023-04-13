@@ -5,21 +5,21 @@ using PizzaWebApi.Core.Interfaces;
 namespace PizzaWebApi.Web.Filters.ActionFilters
 {
     /// <summary>
-    /// Check is existst Cart action filter
-    /// Use with EnsureCartExistsAttribute only! Do not use globaly!
+    /// Check is existst Product action filter
+    /// Use with EnsureProductExistsAttribute only! Do not use globaly!
     /// </summary>
     /// <remarks>
     /// Внимание! Нельзя объявлять глобально, так как требуется точечное использование в определенных
     /// методах Action с помощью аттрибута
-    /// Работает в связке с EnsureCartExistsAttribute
+    /// Работает в связке с EnsureProductExistsAttribute
     /// </remarks>
-    public class EnsureCartExistsActionFilter : IAsyncActionFilter
+    public class EnsureProductExistsActionFilter : IAsyncActionFilter
     {
-        private readonly ICartService _cartService;
+        private readonly IProductService _productService;
 
-        public EnsureCartExistsActionFilter(ICartService cartService)
+        public EnsureProductExistsActionFilter(IProductService productService)
         {
-            _cartService = cartService;
+            _productService = productService;
         }
 
         /// <summary>
@@ -27,15 +27,15 @@ namespace PizzaWebApi.Web.Filters.ActionFilters
         /// </summary>
         public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
         {
-            if (!context.ActionArguments.ContainsKey("cartId"))
-                throw new ArgumentException("Query param cartId is not exists");
-            var cartId = (int)context.ActionArguments["cartId"];
-            if (cartId < 0 || !await _cartService.CartIsExistById(cartId))
+            if (!context.ActionArguments.ContainsKey("productId"))
+                throw new ArgumentException("Query param productId is not exists");
+            var productId = (int)context.ActionArguments["productId"];
+            if (productId < 0 || !await _productService.ProductIsExistById(productId))
             {
                 var error = new ProblemDetails
                 {
                     Title = "An error occurred",
-                    Detail = $"Could not find a cart with ID: {cartId}",
+                    Detail = $"Could not find a Product with ID: {productId}",
                     Status = 404,
                     Type = "https://httpstatuses.com/404"
                 };

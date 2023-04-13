@@ -67,7 +67,11 @@ namespace PizzaWebApi.Web.Extentions
             services.AddTransient<IProductRepository, ProductRepository>();
             services.AddTransient<ICartItemRepository, CartItemRepository>();
 
+            // Если атрибут для фильтра унаследован от ServiceFilterAttribute, то фильтр должен быть зарегситрирован в ServiceCollection
+            // Если атрибут для фильтра унаследован от TypeFilterAttribute, то фильтр не должен быть зарегситрирован в ServiceCollection
             services.AddTransient<EnsureCartExistsActionFilter>();
+            services.AddTransient<EnsureProductExistsActionFilter>();
+            services.AddTransient<EnsureOrderExistsActionFilter>();
 
             // Events
             services.AddScoped<IEventPublisher, EventPublisher>();
