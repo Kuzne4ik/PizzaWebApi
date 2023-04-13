@@ -116,7 +116,7 @@ namespace PizzaWebApi.Tests.Services
 
             var categoryRepositoryMock = new Mock<ICategoryRepository>();
             categoryRepositoryMock
-                .Setup(x => x.GetByIdAsync(It.IsAny<int>))
+                .Setup(x => x.FindByIdAsync(It.IsAny<int>))
                 .ReturnsAsync(_categoriesDB.FirstOrDefault(t => t.Id == testId));
 
             Expression<Func<Category, bool>> predicate = t => t.Id == testId;

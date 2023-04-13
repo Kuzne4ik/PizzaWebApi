@@ -11,6 +11,8 @@ using MediatR;
 using PizzaWebApi.Core.Validators;
 using Hangfire.SqlServer;
 using System.Reflection;
+using PizzaWebApi.Web.Attributes;
+using PizzaWebApi.Web.Filters.ActionFilters;
 
 namespace PizzaWebApi.Web.Extentions
 {
@@ -65,16 +67,21 @@ namespace PizzaWebApi.Web.Extentions
             services.AddTransient<IProductRepository, ProductRepository>();
             services.AddTransient<ICartItemRepository, CartItemRepository>();
 
+            services.AddTransient<EnsureCartExistsActionFilter>();
+
             // Events
             services.AddScoped<IEventPublisher, EventPublisher>();
 
-            // Get IEnumerable<IEventListener>
+            // Find all and Add to service collection IEnumerable<IEventListener>
+            // Найти все Классы-слушатели событий-перехватчики в проекте,
+            // которые наследуются от IEventListener<T> и добавить их в IServiceCollection как синглтоны
             services.Scan(scan => scan.FromAssemblyOf<IEventListener>()
                 .AddClasses(classes => classes.AssignableTo<IEventListener>())
                 .AsImplementedInterfaces()
                 .WithSingletonLifetime());
 
             // Find all Fluent Validators in assembly
+            // найти все классы с валидацией в сборке где есть указанный класс отнаследованные от FluentValidation.AbstractValidator<T>
             services.AddValidatorsFromAssemblyContaining<CategoryDTOValidator>();
 
             //Mapster

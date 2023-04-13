@@ -4,6 +4,7 @@ using PizzaWebApi.Core.Interfaces;
 using PizzaWebApi.Core.ApiModels;
 using PizzaWebApi.Core.Requests;
 using PizzaWebApi.Core.Response;
+using PizzaWebApi.Web.Attributes;
 
 namespace PizzaWebApi.Web.Api
 {
@@ -39,14 +40,14 @@ namespace PizzaWebApi.Web.Api
         }
 
         /// <summary>
-        /// Creates a Order
+        /// Creates an Order
         /// </summary>
         /// <returns>A newly created Order ID</returns>
-        /// <response code="201">Returns the newly created item ID</response>
-        [HttpPost("cart-id={cartId}", Name = "Checkout")]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        /// <response code="200">Returns the newly created Order ID</response>
+        [HttpPost("cart-id={cartId}", Name = "Checkout"), EnsureCartExists]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(int))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public Task<int> Checkout(int cartId, [FromBody] OrderDetailsDTO orderDetailsDTO)
         {
             return _orderService.CheckoutAsync(cartId, orderDetailsDTO);

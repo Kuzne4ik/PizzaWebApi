@@ -1,31 +1,30 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
-namespace PizzaWebApi.Web.ExceptionFilters
+namespace PizzaWebApi.Web.Filters.ExceptionFilters
 {
     /// <summary>
-    /// Catch ArgumentException and create HTTP 400 Bad Request response with error message
+    /// Catch ApplicationException and create HTTP 500 InternalFailure response with error message
     /// </summary>
-    public class ArgumentExceptionFilter : IExceptionFilter
+    public class ApplicationExceptionFilter : IExceptionFilter
     {
         /// <summary>
-        /// Ловить исключения типа ArgumentException 
+        /// Ловить исключения типа ApplicationException 
         /// </summary>
         public void OnException(ExceptionContext context)
         {
-            if (context.Exception is ArgumentException ex)
+            if (context.Exception is ApplicationException ex)
             {
                 var error = new ProblemDetails
                 {
                     Title = "An error occurred",
                     Detail = ex.Message,
-                    Status = 400,
-                    Type = "https://httpstatuses.com/400"
+                    Status = 500,
+                    Type = "https://httpstatuses.com/500"
                 };
-                // Так тоже можно BadRequestObjectResult(ex.Message) 
                 context.Result = new ObjectResult(error)
                 {
-                    StatusCode = 400
+                    StatusCode = 500
                 };
                 context.ExceptionHandled = true;
             }

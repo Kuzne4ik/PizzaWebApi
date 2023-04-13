@@ -7,6 +7,7 @@ using PizzaWebApi.Core.Requests;
 using PizzaWebApi.Core.Response;
 using Microsoft.AspNetCore.Authorization;
 using PizzaWebApi.Core.Models;
+using PizzaWebApi.Web.Attributes;
 
 namespace PizzaWebApi.Web.Api
 {
@@ -35,12 +36,12 @@ namespace PizzaWebApi.Web.Api
         /// </summary>
         /// <param name="id">Cart ID</param>
         //[Authorize]
-        [HttpGet("{id}", Name = "GetCartById")]
+        [HttpGet("{cartId}", Name = "GetCartById"), EnsureCartExists]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CartDTO))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public Task<CartDTO> GetAsync(int id)
+        public Task<CartDTO> GetAsync(int cartId)
         {
-            return _cartService.GetByIdAsync(id);
+            return _cartService.GetByIdAsync(cartId);
         }
 
         /// <summary>
@@ -52,7 +53,6 @@ namespace PizzaWebApi.Web.Api
         /// <exception cref="DbUpdateException"></exception>
         //[Authorize]
         [HttpGet("user-id={userId}", Name = "GetCartByUserId")]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CartDTO))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public Task<CartDTO> GetCartByUserId(int userId)
@@ -64,18 +64,18 @@ namespace PizzaWebApi.Web.Api
         /// <summary>
         /// Add CartItem to Cart
         /// </summary>
-        /// <param name="cartid">Cart ID</param>
+        /// <param name="cartId">Cart ID</param>
         /// <param name="productId">Product ID</param>
         /// <exception cref="KeyNotFoundException"></exception>
         /// <exception cref="DbUpdateException"></exception>
         //[Authorize]
-        [HttpPost("{cartid}/items", Name = "AddCart")]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [HttpPost("{cartId}/items", Name = "AddCart"), EnsureCartExists]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CartItemDTO))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public Task<CartItemDTO> AddItemToCart(int cartid, int productId)
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public Task<CartItemDTO> AddItemToCart(int cartId, int productId)
         {
-            return _cartService.AddItemToCartAsync(cartid, productId);
+            return _cartService.AddItemToCartAsync(cartId, productId);
         }
 
         /// <summary>
@@ -87,9 +87,9 @@ namespace PizzaWebApi.Web.Api
         /// <exception cref="KeyNotFoundException"></exception>
         /// <exception cref="DbUpdateException"></exception>
         //[Authorize]
-        [HttpPut("{cartId}/items", Name = "UpdateCart")]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [HttpPut("{cartId}/items", Name = "UpdateCart"), EnsureCartExists]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public Task<bool> UpdateItem(int cartId, int productId, int qty)
         {
             return _cartService.UpdateItemAsync(cartId, productId, qty);
@@ -99,11 +99,12 @@ namespace PizzaWebApi.Web.Api
         /// Clear the Cart
         /// </summary>
         /// <param name="cartId">Cart ID</param>
-        /// <returns></returns>
+        /// <returns>Is success</returns>
         //[Authorize]
-        [HttpDelete("{cartId}/items", Name = "ClearCart")]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [HttpDelete("{cartId}/items", Name = "ClearCart"), EnsureCartExists]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(bool))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public Task<bool> ClearCart(int cartId)
         {
             return _cartService.ClearCart(cartId);
@@ -114,11 +115,12 @@ namespace PizzaWebApi.Web.Api
         /// </summary>
         /// <param name="cartId"></param>
         /// <param name="productId"></param>
-        /// <returns></returns>
-        /// <exception cref="KeyNotFoundException"></exception>
+        /// <returns>Is success</returns>
         //[Authorize]
-        [HttpDelete(Name = "DeleteCartItem")]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [HttpDelete(Name = "DeleteCartItem"), EnsureCartExists]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(bool))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public Task<bool> RemoveItemFromCartAsync(int cartId, int productId)
         {
             return _cartService.RemoveItemFromCartAsync(cartId, productId);
@@ -128,13 +130,13 @@ namespace PizzaWebApi.Web.Api
         /// Set ProomoCode for the Cart
         /// </summary>
         /// <param name="cartId">Cart ID</param>
-        /// <param name="promocode">Code value</param>
-        /// <returns></returns>
+        /// <param name="promocode">Promocode value</param>
         //[Authorize]
-        [HttpPut("{cartId}/promocode/{promocode}", Name = "SetCartPromocode")]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [HttpPut("{cartId}/promocode/{promocode}", Name = "SetCartPromocode"), EnsureCartExists]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(bool))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public Task<bool> SetPrormoCode(int cartId, string promocode)
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public Task<bool> SetPromoCode(int cartId, string promocode)
         {
             return _cartService.SetPromocode(cartId, promocode);
         }
@@ -143,11 +145,11 @@ namespace PizzaWebApi.Web.Api
         /// Get the Cart Total
         /// </summary>
         /// <param name="cartId">Cart ID</param>
-        /// <returns></returns>
         //[Authorize]
-        [HttpGet("{cartId}/total", Name = "GetCartTotal")]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [HttpGet("{cartId}/total", Name = "GetCartTotal"), EnsureCartExists]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(decimal))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public Task<decimal> GetTotal(int cartId)
         {
             return _cartService.GetTotal(cartId);

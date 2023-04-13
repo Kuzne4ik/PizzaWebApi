@@ -61,10 +61,6 @@ namespace PizzaWebApi.Infrastructure.Services
         public async Task<CartDTO> GetByIdAsync(int id)
         {
             _logger.LogInformation($"{nameof(GetByIdAsync)} run");
-            if (!await CartIsExistById(id))
-            {
-                throw new KeyNotFoundException($"The Cart {id} not found");
-            }
             try
             {
                 return await _cartRepository.FindByConditionQuery(t => t.Id == id).ProjectToType<CartDTO>().SingleOrDefaultAsync();
@@ -137,10 +133,6 @@ namespace PizzaWebApi.Infrastructure.Services
             {
                 throw new ArgumentException($"Argument Product ID {productId} is wrong");
             }
-            if (!await CartIsExistById(cartId))
-            {
-                throw new KeyNotFoundException($"The Cart {cartId} not found");
-            }
             var cartItemIsEsists = await CartItemIsExists(cartId, productId);
 
             try
@@ -193,10 +185,6 @@ namespace PizzaWebApi.Infrastructure.Services
         public async Task<bool> RemoveItemFromCartAsync(int cartId, int productId)
         {
             _logger.LogInformation($"{nameof(RemoveItemFromCartAsync)} run");
-            if (!await CartIsExistById(cartId))
-            {
-                throw new KeyNotFoundException($"The Cart {cartId} not found");
-            }
             if (!await CartItemIsExists(cartId, productId))
             {
                 throw new KeyNotFoundException($"The CartItem from Cart {cartId} and Product {productId} not found");
@@ -227,11 +215,6 @@ namespace PizzaWebApi.Infrastructure.Services
         public async Task<bool> UpdateItemAsync(int cartId, int productId, int quantity)
         {
             _logger.LogInformation($"{nameof(UpdateItemAsync)} run");
-
-            if (!await CartIsExistById(cartId))
-            {
-                throw new KeyNotFoundException($"The Cart {cartId} not found");
-            }
             if (!await CartItemIsExists(cartId, productId))
             {
                 throw new KeyNotFoundException($"The CartItem from Cart {cartId} and Product {productId} not found");
@@ -265,10 +248,6 @@ namespace PizzaWebApi.Infrastructure.Services
         public async Task<bool> ClearCart(int cartId)
         {
             _logger.LogInformation($"{nameof(ClearCart)} run");
-            if (!await CartIsExistById(cartId))
-            {
-                throw new KeyNotFoundException($"The Cart {cartId} not found");
-            }
             try
             {
                 await SetUpdateInfoForCart(cartId);
@@ -292,13 +271,9 @@ namespace PizzaWebApi.Infrastructure.Services
         public async Task<bool> SetPromocode(int cartId, string promoCode)
         {
             _logger.LogInformation($"{nameof(GetTotal)} run");
-            if (!await CartIsExistById(cartId))
-            {
-                throw new KeyNotFoundException($"The Cart {cartId} not found");
-            }
             try
             {
-                var cart = await _cartRepository.GetByIdAsync(cartId);
+                var cart = await _cartRepository.FindByIdAsync(cartId);
                 cart.PromoCode = promoCode;
                 cart.UpdatedBy = cart.UserId;
                 cart.Updated = DateTime.UtcNow;
@@ -321,15 +296,11 @@ namespace PizzaWebApi.Infrastructure.Services
         public async Task<decimal> GetTotal(int cartId)
         {
             _logger.LogInformation($"{nameof(GetTotal)} run");
-            if (!await CartIsExistById(cartId))
-            {
-                throw new KeyNotFoundException($"The Cart {cartId} not found");
-            }
             try
             {
                 var promocode = await _cartRepository.FindByConditionQuery(t => t.Id == cartId).Select(t => t.PromoCode).SingleOrDefaultAsync();
                 var sum = await _cartItemRepository.GetSum(cartId);
-
+                
                 if (!string.IsNullOrEmpty(promocode))
                 {
                     var discount = _promoCodeService.CarculateDiscount(promocode, sum);
@@ -344,9 +315,23 @@ namespace PizzaWebApi.Infrastructure.Services
             }
         }
 
-        private Task<bool> UserIsExistById(int userId)
+        public async Task<bool> CartIsExistById(int id)
         {
             _logger.LogInformation($"{nameof(CartIsExistById)} run");
+            try
+            {
+                return await _cartRepository.AnyAsync(t => t.Id == id);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"{nameof(CartIsExistById)} exception");
+                throw new ApplicationException("Any failed");
+            }
+        }
+
+        private Task<bool> UserIsExistById(int userId)
+        {
+            _logger.LogInformation($"{nameof(UserIsExistById)} run");
             try
             {
                 return Task.FromResult(true);
@@ -358,20 +343,7 @@ namespace PizzaWebApi.Infrastructure.Services
             }
         }
 
-        private async Task<bool> CartIsExistById(int id)
-        {
-            _logger.LogInformation($"{nameof(CartIsExistById)} run");
-            try 
-            { 
-                return await _cartRepository.AnyAsync(t => t.Id == id);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, $"{nameof(CartIsExistById)} exception");
-                throw new ApplicationException("Any failed");
-            }
-        }
-
+        
         private async Task<bool> CartIsExistByUserId(int userId)
         {
             _logger.LogInformation($"{nameof(CartIsExistByUserId)} run");
@@ -402,7 +374,7 @@ namespace PizzaWebApi.Infrastructure.Services
 
         private async Task SetUpdateInfoForCart(int cartId, int userId = 1)
         {
-            var cart = await _cartRepository.GetByIdAsync(cartId);
+            var cart = await _cartRepository.FindByIdAsync(cartId);
 
             cart.UpdatedBy = userId;
             cart.Updated = DateTime.UtcNow;

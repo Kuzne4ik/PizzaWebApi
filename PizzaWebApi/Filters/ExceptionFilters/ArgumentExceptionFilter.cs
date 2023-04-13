@@ -1,32 +1,31 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using PizzaWebApi.Core.Exceptions;
 
-namespace PizzaWebApi.Web.ExceptionFilters
+namespace PizzaWebApi.Web.Filters.ExceptionFilters
 {
     /// <summary>
-    /// Catch OrderStateConflictException and create HTTP 409 InternalFailure response with error message
+    /// Catch ArgumentException and create HTTP 400 Bad Request response with error message
     /// </summary>
-    public class OrderStateConflictExceptionFilter : IExceptionFilter
+    public class ArgumentExceptionFilter : IExceptionFilter
     {
         /// <summary>
-        /// Ловить исключения типа OrderStateConflictException 
+        /// Ловить исключения типа ArgumentException 
         /// </summary>
-        /// <param name="context"></param>
         public void OnException(ExceptionContext context)
         {
-            if (context.Exception is OrderStateConflictException ex)
+            if (context.Exception is ArgumentException ex)
             {
                 var error = new ProblemDetails
                 {
                     Title = "An error occurred",
                     Detail = ex.Message,
-                    Status = 409,
-                    Type = "https://httpstatuses.com/409"
+                    Status = 400,
+                    Type = "https://httpstatuses.com/400"
                 };
+                // Так тоже можно BadRequestObjectResult(ex.Message) 
                 context.Result = new ObjectResult(error)
                 {
-                    StatusCode = 409
+                    StatusCode = 400
                 };
                 context.ExceptionHandled = true;
             }

@@ -18,7 +18,7 @@ namespace PizzaWebApi.Infrastructure.Services
     public class OrderService : IOrderService
     {
         private readonly ICartRepository _cartRepository;
-        private ICartItemRepository _cartItemRepository;
+        private readonly ICartItemRepository _cartItemRepository;
         private readonly IOrderRepository _orderRepository;
         private readonly IOrderItemRepository _orderItemRepository;
         private IPromoCodeService _promoCodeService;
@@ -78,24 +78,20 @@ namespace PizzaWebApi.Infrastructure.Services
         }
 
         /// <summary>
-        /// Create Order for any request
+        /// Create new Order
         /// </summary>
-        /// <param name="id"></param>
+        /// <param name="cartId">Cart ID</param>
+        /// <param name="orderDetails">Order details</param>
         /// <returns>Order ID</returns>
         /// <exception cref="NotImplementedException"></exception>
         public async Task<int> CheckoutAsync(int cartId, OrderDetailsDTO orderDetails)
         {
-            
             _logger.LogInformation($"{nameof(CheckoutAsync)} run");
 
-            if (!await CartIsExistById(cartId))
-            {
-                throw new KeyNotFoundException($"The Cart {cartId} not found");
-            }
             Cart cart = null;
             try
             {
-                cart = await _cartRepository.GetByIdAsync(cartId);
+                cart = await _cartRepository.FindByIdAsync(cartId);
             }
             catch (Exception ex)
             {
@@ -108,7 +104,7 @@ namespace PizzaWebApi.Infrastructure.Services
                 throw new ArgumentException($"Arg {nameof(orderDetails)} is wrong");
             }
 
-            IEnumerable<CartItem> cartItems = null;
+            IList<CartItem> cartItems = null;
 
             try 
             {
@@ -120,13 +116,13 @@ namespace PizzaWebApi.Infrastructure.Services
                 throw new ApplicationException("Get cart items failed");
             }
 
-            if(cartItems.Count() == 0)
+            if(!cartItems.Any())
             {
                 throw new Exception($"Cart items is empty");
             }
             try
             { 
-                var total = decimal.Zero;
+                var total = 0m;
                 var sum = cartItems.Sum(x => x.Product.Price * x.Quantity);
 
                 if (!string.IsNullOrEmpty(cart.PromoCode))
@@ -197,7 +193,7 @@ namespace PizzaWebApi.Infrastructure.Services
             Order order;
             try 
             { 
-                order = await _orderRepository.GetByIdAsync(orderId);
+                order = await _orderRepository.FindByIdAsync(orderId);
             }
             catch (Exception ex)
             {
@@ -255,20 +251,6 @@ namespace PizzaWebApi.Infrastructure.Services
             catch (Exception ex)
             {
                 _logger.LogError(ex, $"{nameof(OrderIsExistById)} exception");
-                throw new ApplicationException("Any failed");
-            }
-        }
-
-        private async Task<bool> CartIsExistById(int id)
-        {
-            _logger.LogInformation($"{nameof(CartIsExistById)} run");
-            try
-            {
-                return await _cartRepository.AnyAsync(t => t.Id == id);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, $"{nameof(CartIsExistById)} exception");
                 throw new ApplicationException("Any failed");
             }
         }

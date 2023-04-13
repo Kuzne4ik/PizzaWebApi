@@ -14,7 +14,7 @@ namespace PizzaWebApi.SharedKernel.Interfaces
         /// <typeparam name="TId"></typeparam>
         /// <param name="id"></param>
         /// <returns></returns>
-        Task<T?> GetByIdAsync<TId>(TId id) where TId : notnull;
+        Task<T?> FindByIdAsync<TId>(TId id) where TId : notnull;
 
         Task<IEnumerable<T>> ListAsync();
 

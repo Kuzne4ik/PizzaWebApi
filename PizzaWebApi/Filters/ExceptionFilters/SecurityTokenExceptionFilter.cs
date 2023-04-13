@@ -1,27 +1,27 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using System.Security.Authentication;
+using Microsoft.IdentityModel.Tokens;
 
-namespace PizzaWebApi.Web.ExceptionFilters
+namespace PizzaWebApi.Web.Filters.ExceptionFilters
 {
     /// <summary>
-    /// Catch AuthenticationException and create HTTP 403 Forbidden response with error message
+    /// Catch SecurityTokenException and create HTTP 403 Forbidden Bad Request response with error message
     /// </summary>
-    public class AuthenticationExceptionFilter : IExceptionFilter
+    public class SecurityTokenExceptionFilter : IExceptionFilter
     {
         /// <summary>
-        /// Ловить исключения типа AuthenticationException 
+        /// Ловить исключения типа SecurityTokenException 
         /// </summary>
         public void OnException(ExceptionContext context)
         {
-            if (context.Exception is AuthenticationException ex)
+            if (context.Exception is SecurityTokenException ex)
             {
                 var error = new ProblemDetails
                 {
                     Title = "An error occurred",
                     Detail = ex.Message,
                     Status = 403,
-                    Type = "https://httpstatuses.com/403"
+                    Type = "https://httpstatuses.com/409"
                 };
                 context.Result = new ObjectResult(error)
                 {

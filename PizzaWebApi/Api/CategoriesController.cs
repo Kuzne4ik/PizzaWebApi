@@ -56,7 +56,6 @@ namespace PizzaWebApi.Web.Api
         /// <response code="201">Returns the newly created item</response>
         /// <exception cref="DbUpdateException"></exception>
         [HttpPost(Name = "CreateCategory")]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CategoryDTO))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public Task<CategoryDTO> Create([FromBody] CategoryDTO categoryDTO)
@@ -71,7 +70,6 @@ namespace PizzaWebApi.Web.Api
         /// <exception cref="KeyNotFoundException"></exception>
         /// <exception cref="DbUpdateException"></exception>
         [HttpPut(Name = "UpdateCategory")]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public Task<bool> Edit([FromBody] CategoryDTO categoryDTO)
         {

@@ -174,7 +174,7 @@ namespace PizzaWebApi.Infrastructure.Services
             
             try
             {
-                var product = await _productRepository.GetByIdAsync(id);
+                var product = await _productRepository.FindByIdAsync(id);
                 return await _productRepository.DeleteAsync(product);
             }
             catch (Exception ex)

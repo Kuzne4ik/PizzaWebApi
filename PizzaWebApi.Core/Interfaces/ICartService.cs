@@ -25,6 +25,7 @@ namespace PizzaWebApi.Core.Interfaces
 
         Task<decimal> GetTotal(int cartId);
 
+        Task<bool> CartIsExistById(int id);
 
     }
 }

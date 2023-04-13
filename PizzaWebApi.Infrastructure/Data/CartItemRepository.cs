@@ -31,7 +31,7 @@ namespace PizzaWebApi.Infrastructure.Data
             return await RepositoryContext.CartItems.Where(t => t.CartId == cartId).SumAsync(t => t.Quantity * t.Product.Price);
         }
 
-        public async Task<IEnumerable<CartItem>> GetCartItemsAsync(int cartId)
+        public async Task<IList<CartItem>> GetCartItemsAsync(int cartId)
         {
             return await RepositoryContext.CartItems
                 .Include(t => t.Product)

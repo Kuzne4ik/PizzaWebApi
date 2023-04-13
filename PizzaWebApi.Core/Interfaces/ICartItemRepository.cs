@@ -8,6 +8,6 @@ namespace PizzaWebApi.Core.Interfaces
         CartItem? GetCartItem(int cartId, int productId);
         Task<bool> DeleteAsync(int cartId, int productId);
         Task<decimal> GetSum(int cartId);
-        Task<IEnumerable<CartItem>> GetCartItemsAsync(int cartId);
+        Task<IList<CartItem>> GetCartItemsAsync(int cartId);
     }
 }

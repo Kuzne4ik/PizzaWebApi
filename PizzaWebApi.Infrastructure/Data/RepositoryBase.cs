@@ -23,7 +23,7 @@ namespace PizzaWebApi.Infrastructure.Data
         /// <typeparam name="TId"></typeparam>
         /// <param name="id"></param>
         /// <returns></returns>
-        public async Task<T?> GetByIdAsync<TId>(TId id) where TId : notnull => await RepositoryContext.Set<T>().FindAsync(id);
+        public async Task<T?> FindByIdAsync<TId>(TId id) where TId : notnull => await RepositoryContext.Set<T>().FindAsync(id);
 
         public async Task<IEnumerable<T>> ListAsync() => await RepositoryContext.Set<T>().AsNoTracking().ToListAsync();
 

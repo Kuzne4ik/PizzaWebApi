@@ -1,7 +1,6 @@
 ﻿using MapsterMapper;
 using Moq;
 using PizzaWebApi.Core.Models;
-using PizzaWebApi.SharedKernel.Interfaces;
 using System.Linq.Expressions;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,7 +25,7 @@ namespace PizzaWebApi.Tests.Services
         private PromoCodeService _promoCodeService;
         Mock<IMediator> _mediatorMock;
 
-        static Product product = new Product
+        static Product product = new()
         {
             Id = 1,
             CategoryId = 1,
@@ -193,7 +192,7 @@ namespace PizzaWebApi.Tests.Services
                 .ReturnsAsync(cartsMock.Any(t => t.Id == cartId));
 
             cartRepositoryMock
-                .Setup(x => x.GetByIdAsync(cartId))
+                .Setup(x => x.FindByIdAsync(cartId))
                 .ReturnsAsync(_cartsDB.First(t => t.Id == cartId));
 
             cartRepositoryMock
@@ -217,7 +216,7 @@ namespace PizzaWebApi.Tests.Services
             var cartItemRepositoryMock = new Mock<ICartItemRepository>();
             cartItemRepositoryMock
                 .Setup(x => x.GetCartItemsAsync(cartId))
-                .ReturnsAsync(cartItems.Where(t => t.CartId == cartId));
+                .ReturnsAsync(cartItems.Where(t => t.CartId == cartId).ToList());
 
             var orderItemRepositoryMock = new Mock<IOrderItemRepository>();
 
@@ -326,7 +325,7 @@ namespace PizzaWebApi.Tests.Services
                 .ReturnsAsync(ordersMock.Any(t => t.Id == orderId));
 
             orderRepositoryMock
-                .Setup(x => x.GetByIdAsync(orderId))
+                .Setup(x => x.FindByIdAsync(orderId))
                 .ReturnsAsync(() =>
                 {
                     return _ordersDB.SingleOrDefault(t => t.Id == orderId);

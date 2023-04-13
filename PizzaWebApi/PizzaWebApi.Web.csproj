@@ -4,7 +4,7 @@
 	<UserSecretsId>57531ef4-fb7a-469b-95e8-4983ffce9ca3</UserSecretsId>
 	<GenerateDocumentationFile>true</GenerateDocumentationFile>
     <TargetFramework>net6.0</TargetFramework>
-    <Nullable>enable</Nullable>
+    <Nullable>warnings</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <DockerComposeProjectPath>..\docker-compose.dcproj</DockerComposeProjectPath>
@@ -47,6 +47,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="ExceptionFilters\" />
     <Folder Include="Log\" />
   </ItemGroup>
 

@@ -12,7 +12,7 @@ using PizzaWebApi.Core.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using PizzaWebApi.Web.ExceptionFilters;
+using PizzaWebApi.Web.Filters.ExceptionFilters;
 
 var builder = WebApplication.CreateBuilder(args);
 

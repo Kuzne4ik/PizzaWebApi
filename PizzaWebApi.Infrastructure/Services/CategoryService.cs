@@ -140,7 +140,7 @@ namespace PizzaWebApi.Infrastructure.Services
             }
             try
             {
-                var category = await _categoryRepository.GetByIdAsync(id);
+                var category = await _categoryRepository.FindByIdAsync(id);
                 return await _categoryRepository.DeleteAsync(category);
             }
             catch (Exception ex)

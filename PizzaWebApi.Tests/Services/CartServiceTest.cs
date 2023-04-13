@@ -106,7 +106,7 @@ namespace PizzaWebApi.Tests.Services
 
             var cartRepositoryMock = new Mock<ICartRepository>();
             cartRepositoryMock
-                .Setup(x => x.GetByIdAsync(cartId))
+                .Setup(x => x.FindByIdAsync(cartId))
                 .ReturnsAsync(_cartsDB.FirstOrDefault(t => t.Id == cartId));
 
             cartRepositoryMock
@@ -195,7 +195,7 @@ namespace PizzaWebApi.Tests.Services
                 .Setup(x => x.AnyAsync(It.IsAny<Expression<Func<Cart, bool>>>()))
                     .ReturnsAsync(cartsMock.Any(t => t.Id == cartId));
             cartRepositoryMock
-                .Setup(x => x.GetByIdAsync(It.IsAny<int>()))
+                .Setup(x => x.FindByIdAsync(It.IsAny<int>()))
                     .ReturnsAsync(cartsMock.FirstOrDefault(t => t.Id == cartId));
             
 
@@ -270,7 +270,7 @@ namespace PizzaWebApi.Tests.Services
                 .Setup(x => x.AnyAsync(It.IsAny<Expression<Func<Cart, bool>>>()))
                     .ReturnsAsync(cartsMock.Any(t => t.Id == cartId));
             cartRepositoryMock
-                .Setup(x => x.GetByIdAsync(It.IsAny<int>()))
+                .Setup(x => x.FindByIdAsync(It.IsAny<int>()))
                     .ReturnsAsync(cartsMock.FirstOrDefault(t => t.Id == cartId));
 
             var cartItemRepositoryMock = new Mock<ICartItemRepository>();
@@ -330,7 +330,7 @@ namespace PizzaWebApi.Tests.Services
                 .Setup(x => x.AnyAsync(It.IsAny<Expression<Func<Cart, bool>>>()))
                     .ReturnsAsync(cartsMock.Any(t => t.Id == cartId));
             cartRepositoryMock
-                .Setup(x => x.GetByIdAsync(It.IsAny<int>()))
+                .Setup(x => x.FindByIdAsync(It.IsAny<int>()))
                     .ReturnsAsync(cartsMock.FirstOrDefault(t => t.Id == cartId));
 
             var cartItemRepositoryMock = new Mock<ICartItemRepository>();
@@ -391,7 +391,7 @@ namespace PizzaWebApi.Tests.Services
                     .ReturnsAsync(cartsMock.Any(t => t.Id == cartId));
 
             cartRepositoryMock
-                .Setup(x => x.GetByIdAsync(It.IsAny<int>()))
+                .Setup(x => x.FindByIdAsync(It.IsAny<int>()))
                     .ReturnsAsync(cartsMock.FirstOrDefault(t => t.Id == cartId));
 
             cartRepositoryMock
@@ -433,7 +433,7 @@ namespace PizzaWebApi.Tests.Services
                 .Setup(x => x.AnyAsync(It.IsAny<Expression<Func<Cart, bool>>>()))
                     .ReturnsAsync(cartsMock.Any(t => t.Id == cartId));
             cartRepositoryMock
-                .Setup(x => x.GetByIdAsync(cartId))
+                .Setup(x => x.FindByIdAsync(cartId))
                 .ReturnsAsync(_cartsDB.FirstOrDefault(t => t.Id == cartId));
 
             cartRepositoryMock
