@@ -151,11 +151,15 @@ app.UseHangfireDashboard("/hangfire", new DashboardOptions
     Authorization = new[] { new HangfireDashboardAuthorization() }
 });
 
+// StaticFileMiddleware файлы картинок, css
 app.UseStaticFiles();
 
+// EndpointRoutingMiddleware 
 app.UseRouting();
 
+// AuthenticationMiddleware
 app.UseAuthentication();
+// AuthorizationMiddleware
 app.UseAuthorization();
 
 app.MapControllers();
