@@ -6,9 +6,11 @@ using PizzaWebApi.Core.Requests;
 
 namespace PizzaWebApi.Web.Api
 {
-    public class AccountController : BaseApiController
+    [Route("api")]
+    [ApiController]
+    public class AccountController : ControllerBase //Наследуется от базового класса, чтобы избавится от части урла Account
     {
-        IAccountService _accountService;
+        readonly IAccountService _accountService;
 
         public AccountController(IAccountService accountService)
         {
@@ -21,21 +23,21 @@ namespace PizzaWebApi.Web.Api
         /// <param name="accountRegisterRequest"></param>
         /// <returns></returns>
         [AllowAnonymous]
-        [HttpPost("/register", Name = "Register")]
+        [HttpPost("register", Name = "Register")]
         public Task<bool> RegisterAsync(AccountRegisterRequest accountRegisterRequest)
         {
             return _accountService.RegisterAsync(accountRegisterRequest);
         }
 
         [AllowAnonymous]
-        [HttpPost("/login", Name = "Login")]
+        [HttpPost("login", Name = "Login")]
         public Task<TokenDTO> LoginAsync(LoginRequest loginRequest)
         {
             return _accountService.LoginAsync(loginRequest);
         }
 
         [AllowAnonymous]
-        [HttpPost("/token-refresh", Name = "TokenRefresh")]
+        [HttpPost("token-refresh", Name = "TokenRefresh")]
         public Task<TokenDTO> TokenRefreshAsync(TokenRefreshRequest tokenRefreshRequest)
         {
             return _accountService.TokenRefreshAsync(tokenRefreshRequest);
