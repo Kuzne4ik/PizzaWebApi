@@ -3,6 +3,12 @@ using System.ComponentModel.DataAnnotations;
 
 namespace PizzaWebApi.Core.ApiModels
 {
+    /// <summary>
+    /// OrderDetailsDTO contract
+    /// </summary>
+    /// <remarks>
+    /// Валидатор <see cref="Validators.OrderDetailsDTOValidator"/>
+    /// </remarks>
     public class OrderDetailsDTO
     {
         [Required]

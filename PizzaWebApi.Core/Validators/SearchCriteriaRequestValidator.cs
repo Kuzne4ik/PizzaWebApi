@@ -9,6 +9,7 @@ namespace PizzaWebApi.Core.Validators
         {
             RuleFor(c => c.Page).GreaterThan(-1).NotEmpty();
             RuleFor(c => c.PageSize).GreaterThan(-1).NotEmpty();
+            RuleFor(c => c.Keyword).MinimumLength(3);
         }
     }
 }

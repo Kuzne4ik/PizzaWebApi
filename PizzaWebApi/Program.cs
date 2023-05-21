@@ -12,7 +12,18 @@ using PizzaWebApi.Core.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using MicroElements.Swashbuckle.FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.HttpOverrides;
 using PizzaWebApi.Web.Filters.ExceptionFilters;
+using MapsterMapper;
+using PizzaWebApi.Core.Validators;
+using PizzaWebApi.Core;
+using PizzaWebApi.Infrastructure.Mediators.Handlers;
+using MediatR;
+using System.Reflection;
+using Hangfire.SqlServer;
+using PizzaWebApi.Core.Events;
+using PizzaWebApi.Core.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -31,10 +42,12 @@ builder.Services
     .AddFluentValidation(fluent =>
     {
         //Stop validation on first error
-        fluent.ValidatorOptions.CascadeMode = CascadeMode.Stop;
+        fluent.ValidatorOptions.DefaultClassLevelCascadeMode = CascadeMode.Stop;
         //Fluent validation only (without MVC validation)
         fluent.DisableDataAnnotationsValidation = true;
+        // ToDo: Нужно посмотреть
         fluent.LocalizationEnabled = false;
+        
     })
     .AddNewtonsoftJson();
 
@@ -110,14 +123,79 @@ builder.Host.UseSerilog((context, services, configuration) => configuration
                     .ReadFrom.Services(services)
                     .WriteTo.Console());
 
-// Add Servicess
-builder.Services.AddServices(builder.Configuration);
+// Регистрируем валиадаторы, используются вместо аттриубутов [Required]
+// Find all Fluent Validators in assembly
+// найти все классы с валидацией в сборке где есть указанный класс отнаследованные от FluentValidation.AbstractValidator<T>
+builder.Services.AddValidatorsFromAssemblyContaining<CategoryDTOValidator>();
+
+//Mapster (маппинг)
+builder.Services.AddSingleton(MapsterMapperSetup.GetTypeAdapterConfig());
+builder.Services.AddScoped<IMapper, ServiceMapper>();
 
 // Add service health check include SqlServer with EF check
 builder.Services.AddHealthChecks().AddDbContextCheck<AppDbContext>();
 
 // For Angular
 builder.Services.AddCors();
+
+builder.Services.AddSwaggerGen(options =>
+{
+    // Add comments 
+    var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
+});
+
+// Add FV Rules to swagger
+builder.Services.AddFluentValidationRulesToSwagger();
+
+
+#region Hangfire - как Cron. Создает таблицы в БД с данными для работы. Проблемы с либой EF при развертывании в Production (помогает выключить совсем)
+
+// Add Hangfire services.
+builder.Services.AddHangfire(t => t
+    .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
+    .UseSimpleAssemblyNameTypeSerializer()
+    .UseRecommendedSerializerSettings()
+    .UseSqlServerStorage(
+        builder.Configuration.GetConnectionString("MsSQLOnDockerConnection"),
+        new SqlServerStorageOptions
+        {
+            CommandBatchMaxTimeout = TimeSpan.FromMinutes(5),
+            SlidingInvisibilityTimeout = TimeSpan.FromMinutes(5),
+            QueuePollInterval = TimeSpan.Zero,
+            UseRecommendedIsolationLevel = true,
+            DisableGlobalLocks = true
+        }));
+
+// Add the processing server as IHostedService
+builder.Services.AddHangfireServer();
+
+// Register Handfire Jobs
+builder.Services.AddHostedService<HandfireRegisterJobsHostedService>();
+
+#endregion
+
+// MediatR (работает с событиями основной вариант)
+builder.Services.AddMediatR(typeof(GetAllProductsHandler));
+
+#region Events Для работы с событиями альтернативный вариант с помощью DI
+
+// Events
+builder.Services.AddScoped<IEventPublisher, EventPublisher>();
+
+// Find all and Add to service collection IEnumerable<IEventListener>
+// Найти все Классы-слушатели событий-перехватчики в проекте,
+// которые наследуются от IEventListener<T> и добавить их в IServiceCollection как синглтоны
+builder.Services.Scan(scan => scan.FromAssemblyOf<IEventListener>()
+    .AddClasses(classes => classes.AssignableTo<IEventListener>())
+    .AsImplementedInterfaces()
+    .WithSingletonLifetime());
+
+
+#endregion
+
+// Add Services (пример как вынести часть кода в отедельный класс)
+builder.Services.AddServices(builder.Configuration);
 
 var app = builder.Build();
 
@@ -153,6 +231,13 @@ app.UseHangfireDashboard("/hangfire", new DashboardOptions
 
 // StaticFileMiddleware файлы картинок, css
 app.UseStaticFiles();
+
+// Для проброса заголовков https и IP адрес клиента сковзь прокси серверер
+// Чтобы не замещались "пустыми" данными прокси серевера
+app.UseForwardedHeaders(new ForwardedHeadersOptions()
+{
+    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+});
 
 // EndpointRoutingMiddleware 
 app.UseRouting();

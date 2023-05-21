@@ -2,6 +2,12 @@
 
 namespace PizzaWebApi.Core.ApiModels
 {
+    /// <summary>
+    /// CartItem contract
+    /// </summary>
+    /// <remarks>
+    /// Валидатор <see cref="Validators.CartItemDTOValidator"/>
+    /// </remarks>
     public class CartItemDTO
     {
         public int Id { get; set; }

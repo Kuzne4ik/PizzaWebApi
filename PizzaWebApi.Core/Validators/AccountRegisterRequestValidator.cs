@@ -7,9 +7,9 @@ namespace PizzaWebApi.Core.Validators
     {
         public AccountRegisterRequestValidator()
         {
-            RuleFor(c => c.UserName).NotEmpty();
-            RuleFor(c => c.Password).NotEmpty();
-            RuleFor(c => c.Name).NotEmpty();
+            RuleFor(c => c.UserName).NotEmpty().MinimumLength(3).MaximumLength(256);
+            RuleFor(c => c.Password).NotEmpty().MinimumLength(6);
+            RuleFor(c => c.Name).NotEmpty().MinimumLength(3).MaximumLength(256);
             RuleFor(c => c.Email).NotEmpty().EmailAddress();
         }
     }

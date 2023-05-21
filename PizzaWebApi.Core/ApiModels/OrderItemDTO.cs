@@ -1,5 +1,11 @@
 ﻿namespace PizzaWebApi.Core.ApiModels
 {
+    /// <summary>
+    /// OrderItemDTO contract
+    /// </summary>
+    /// <remarks>
+    /// Валидатор <see cref="Validators.OrderItemDTOValidator"/>
+    /// </remarks>
     public class OrderItemDTO
     {
         public int OrderId { get; set; }

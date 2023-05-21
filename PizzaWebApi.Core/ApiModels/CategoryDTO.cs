@@ -5,6 +5,9 @@ namespace PizzaWebApi.Core.ApiModels
     /// <summary>
     /// Category Data contract
     /// </summary>
+    /// <remarks>
+    /// Валидатор <see cref="Validators.CategoryDTOValidator"/>
+    /// </remarks>
     public class CategoryDTO
     {
         public int Id { get; set; }

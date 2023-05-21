@@ -1,5 +1,11 @@
 ﻿namespace PizzaWebApi.Core.Requests
 {
+    /// <summary>
+    /// Тело запроса для аудентификации пользователя
+    /// </summary>
+    /// <remarks>
+    /// Валидатор <see cref="Validators.LoginRequestValidator"/>
+    /// </remarks>
     public class LoginRequest
     {
         /// <summary>

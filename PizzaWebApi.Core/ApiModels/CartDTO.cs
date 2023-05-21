@@ -1,15 +1,15 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace PizzaWebApi.Core.ApiModels
+﻿namespace PizzaWebApi.Core.ApiModels
 {
     /// <summary>
     /// Cart Data contract
     /// </summary>
+    /// <remarks>
+    /// Валидатор <see cref="Validators.CartDTOValidator"/>
+    /// </remarks>
     public class CartDTO
     {
         public int Id { get; set; }
 
-        [Required]
         public int UserId { get; set; }
         public string PromoCode { get; set; }
         public decimal Total { get; set; }
