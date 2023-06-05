@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc;
 using PizzaWebApi.Core.Interfaces;
+using PizzaWebApi.Core.Models;
 
 namespace PizzaWebApi.Web.Filters.ActionFilters
 {
@@ -16,10 +17,12 @@ namespace PizzaWebApi.Web.Filters.ActionFilters
     public class EnsureProductExistsActionFilter : IAsyncActionFilter
     {
         private readonly IProductService _productService;
+        private readonly ILogger<EnsureProductExistsActionFilter> _logger;
 
-        public EnsureProductExistsActionFilter(IProductService productService)
+        public EnsureProductExistsActionFilter(IProductService productService, ILogger<EnsureProductExistsActionFilter> logger)
         {
             _productService = productService;
+            _logger = logger;
         }
 
         /// <summary>
@@ -27,11 +30,12 @@ namespace PizzaWebApi.Web.Filters.ActionFilters
         /// </summary>
         public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
         {
-            if (!context.ActionArguments.ContainsKey("productId"))
+            if (!context.ActionArguments.ContainsKey("productId") || context.ActionArguments["productId"] == null)
                 throw new ArgumentException("Query param productId is not exists");
-            var productId = (int)context.ActionArguments["productId"];
+            var productId = (int)context.ActionArguments["productId"]!;
             if (productId < 0 || !await _productService.ProductIsExistById(productId))
             {
+                _logger.LogWarning("Product with ID = {0} is not exists", productId);
                 var error = new ProblemDetails
                 {
                     Title = "An error occurred",

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using PizzaWebApi.Core.Interfaces;
 using PizzaWebApi.Core.ApiModels;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using PizzaWebApi.Core.Requests.Mediators;
 using PizzaWebApi.Core.Response;
 using PizzaWebApi.Core.Requests;
@@ -51,6 +52,7 @@ namespace PizzaWebApi.Web.Api
         /// <param name="productDTO"></param>
         /// <returns>A newly created Product</returns>
         /// <response code="201">Returns the newly created item</response>
+        [Authorize]
         [HttpPost(Name = "CreateProduct")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ProductDTO))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -63,6 +65,7 @@ namespace PizzaWebApi.Web.Api
         /// Update Product
         /// </summary>
         /// <param name="productDTO"></param>
+        [Authorize]
         [HttpPut("UpdateProduct")]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public Task<bool> Edit([FromBody] ProductDTO productDTO)
@@ -74,7 +77,7 @@ namespace PizzaWebApi.Web.Api
         /// Delete Product
         /// </summary>
         /// <param name="productId">Product ID</param>
-        /// <returns></returns>
+        [Authorize]
         [HttpDelete("{productId:int}", Name = "DeleteProduct"), EnsureProductExists]
         
         public Task<bool> Delete(int productId)

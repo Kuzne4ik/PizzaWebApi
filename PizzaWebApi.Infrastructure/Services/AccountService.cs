@@ -64,6 +64,8 @@ namespace PizzaWebApi.Infrastructure.Services
 
         /// <summary>
         /// User Login
+        /// "UserName": "Kuzne4ik"
+        /// "Password": "Aa123456"
         /// </summary>
         /// <param name="loginRequest"></param>
         /// <returns>TokenDTO</returns>

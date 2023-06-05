@@ -68,7 +68,7 @@ namespace PizzaWebApi.Web.Api
         /// <param name="productId">Product ID</param>
         /// <exception cref="KeyNotFoundException"></exception>
         /// <exception cref="DbUpdateException"></exception>
-        //[Authorize]
+        [Authorize]
         [HttpPost("{cartId}/items", Name = "AddCart"), EnsureCartExists]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CartItemDTO))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -86,7 +86,7 @@ namespace PizzaWebApi.Web.Api
         /// <param name="qty">CartItem quantity</param>
         /// <exception cref="KeyNotFoundException"></exception>
         /// <exception cref="DbUpdateException"></exception>
-        //[Authorize]
+        [Authorize]
         [HttpPut("{cartId}/items", Name = "UpdateCart"), EnsureCartExists]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -116,7 +116,7 @@ namespace PizzaWebApi.Web.Api
         /// <param name="cartId"></param>
         /// <param name="productId"></param>
         /// <returns>Is success</returns>
-        //[Authorize]
+        [Authorize]
         [HttpDelete(Name = "DeleteCartItem"), EnsureCartExists]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(bool))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -131,7 +131,7 @@ namespace PizzaWebApi.Web.Api
         /// </summary>
         /// <param name="cartId">Cart ID</param>
         /// <param name="promocode">Promocode value</param>
-        //[Authorize]
+        [Authorize]
         [HttpPut("{cartId}/promocode/{promocode}", Name = "SetCartPromocode"), EnsureCartExists]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(bool))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -145,7 +145,7 @@ namespace PizzaWebApi.Web.Api
         /// Get the Cart Total
         /// </summary>
         /// <param name="cartId">Cart ID</param>
-        //[Authorize]
+        [Authorize]
         [HttpGet("{cartId}/total", Name = "GetCartTotal"), EnsureCartExists]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(decimal))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]

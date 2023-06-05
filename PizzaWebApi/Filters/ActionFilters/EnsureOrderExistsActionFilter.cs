@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc;
 using PizzaWebApi.Core.Interfaces;
-using PizzaWebApi.Core.Models;
 
 namespace PizzaWebApi.Web.Filters.ActionFilters
 {
@@ -17,22 +16,31 @@ namespace PizzaWebApi.Web.Filters.ActionFilters
     public class EnsureOrderExistsActionFilter : IAsyncActionFilter
     {
         private readonly IOrderService _orderService;
+        private readonly ILogger<EnsureOrderExistsActionFilter> _logger;
 
-        public EnsureOrderExistsActionFilter(IOrderService orderService)
+        /// <summary>
+        /// Фильтр для аттрибута Action проверка существования Order по ID
+        /// </summary>
+        /// <param name="orderService"></param>
+        /// <param name="logger"></param>
+        public EnsureOrderExistsActionFilter(IOrderService orderService, ILogger<EnsureOrderExistsActionFilter> logger)
         {
             _orderService = orderService;
+            _logger = logger;
         }
 
         /// <summary>
         /// Call before Action execute
         /// </summary>
-        public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
+        public async Task OnActionExecutionAsync(ActionExecutingContext cxt, ActionExecutionDelegate next)
         {
-            if (!context.ActionArguments.ContainsKey("orderId"))
+            if (!cxt.ActionArguments.ContainsKey("orderId") || cxt.ActionArguments["orderId"] == null)
                 throw new ArgumentException("Query param orderId is not exists");
-            var orderId = (int)context.ActionArguments["orderId"];
+            var orderId = (int)cxt.ActionArguments["orderId"]!;
             if (orderId < 0 || !await _orderService.OrderIsExistById(orderId))
             {
+                _logger.LogWarning("Order with ID = {0} is not exists", orderId);
+
                 var error = new ProblemDetails
                 {
                     Title = "An error occurred",
@@ -40,7 +48,7 @@ namespace PizzaWebApi.Web.Filters.ActionFilters
                     Status = 404,
                     Type = "https://httpstatuses.com/404"
                 };
-                context.Result = new ObjectResult(error)
+                cxt.Result = new ObjectResult(error)
                 {
                     StatusCode = 404
                 };

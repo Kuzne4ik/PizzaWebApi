@@ -117,11 +117,12 @@ builder.Services.BuildServiceProvider().GetService<AppIdentityDbContext>().Datab
 builder.Services.AddEndpointsApiExplorer();
 
 // Serilog
-builder.Host.UseSerilog((context, services, configuration) => configuration
-                    .Enrich.FromLogContext()
-                    .ReadFrom.Configuration(context.Configuration)
-                    .ReadFrom.Services(services)
-                    .WriteTo.Console());
+builder.Host.UseSerilog((context, configuration) => configuration
+    //.Enrich.FromLogContext()
+    .Enrich.WithThreadId()
+    .Enrich.WithThreadName()
+    .ReadFrom.Configuration(context.Configuration)
+);
 
 // Регистрируем валиадаторы, используются вместо аттриубутов [Required]
 // Find all Fluent Validators in assembly

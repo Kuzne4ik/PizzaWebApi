@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc;
 using PizzaWebApi.Core.Interfaces;
+using PizzaWebApi.Core.Models;
 
 namespace PizzaWebApi.Web.Filters.ActionFilters
 {
@@ -16,11 +17,13 @@ namespace PizzaWebApi.Web.Filters.ActionFilters
     public class EnsureCategoryExistsActionFilter : IAsyncActionFilter
     {
         private readonly ICategoryService _categoryService;
+        private readonly ILogger<EnsureCategoryExistsActionFilter> _logger;
 
 
-        public EnsureCategoryExistsActionFilter(ICategoryService categoryService)
+        public EnsureCategoryExistsActionFilter(ICategoryService categoryService, ILogger<EnsureCategoryExistsActionFilter> logger)
         {
             _categoryService = categoryService;
+            _logger = logger;
         }
 
         /// <summary>
@@ -30,9 +33,10 @@ namespace PizzaWebApi.Web.Filters.ActionFilters
         {
             if (!context.ActionArguments.ContainsKey("categoryId"))
                 throw new ArgumentException("Query param CategoryId is not exists");
-            var categoryId = (int)context.ActionArguments["categoryId"];
+            var categoryId = (int)context.ActionArguments["categoryId"]!;
             if (categoryId < 0 || !await _categoryService.CategoryIsExistById(categoryId))
             {
+                _logger.LogWarning("Category with ID = {0} is not exists", categoryId);
                 var error = new ProblemDetails
                 {
                     Title = "An error occurred",

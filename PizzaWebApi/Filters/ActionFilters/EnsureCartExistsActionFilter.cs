@@ -16,10 +16,12 @@ namespace PizzaWebApi.Web.Filters.ActionFilters
     public class EnsureCartExistsActionFilter : IAsyncActionFilter
     {
         private readonly ICartService _cartService;
+        private readonly ILogger<EnsureCartExistsActionFilter> _logger;
 
-        public EnsureCartExistsActionFilter(ICartService cartService)
+        public EnsureCartExistsActionFilter(ICartService cartService, ILogger<EnsureCartExistsActionFilter> logger)
         {
             _cartService = cartService;
+            _logger = logger;
         }
 
         /// <summary>
@@ -27,11 +29,12 @@ namespace PizzaWebApi.Web.Filters.ActionFilters
         /// </summary>
         public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
         {
-            if (!context.ActionArguments.ContainsKey("cartId"))
+            if (!context.ActionArguments.ContainsKey("cartId") || context.ActionArguments["cartId"] == null)
                 throw new ArgumentException("Query param cartId is not exists");
-            var cartId = (int)context.ActionArguments["cartId"];
+            var cartId = (int)context.ActionArguments["cartId"]!;
             if (cartId < 0 || !await _cartService.CartIsExistById(cartId))
             {
+                _logger.LogWarning("Cart with ID = {0} is not exists", cartId);
                 var error = new ProblemDetails
                 {
                     Title = "An error occurred",
