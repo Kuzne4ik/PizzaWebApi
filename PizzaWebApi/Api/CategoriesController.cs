@@ -25,9 +25,9 @@ namespace PizzaWebApi.Web.Api
         /// </summary>
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(SearchResult<CategoryDTO>))]
         [HttpPost("search", Name = "SearchCategories")]
-        public Task<SearchResult<CategoryDTO>> GetAllAsync([FromBody] SearchCriteriaRequest searhCriteriaRequest)
+        public Task<SearchResult<CategoryDTO>> GetAllAsync([FromBody] SearchCriteriaRequest searchCriteriaRequest)
         {
-            return _categoryService.GetAllAsync(searhCriteriaRequest);
+            return _categoryService.GetAllAsync(searchCriteriaRequest);
         }
 
         [HttpPost("{categoryId:int}/products/search", Name = "SearchCategoryProducts"), EnsureCategoryExists]

@@ -32,6 +32,13 @@ namespace PizzaWebApi.Infrastructure.Services
             _logger = logger;
         }
 
+        /// <summary>
+        /// Получить все Cart по критерию поиска
+        /// </summary>
+        /// <param name="pageCriteriaRequest"></param>
+        /// <returns></returns>
+        /// <exception cref="ApplicationException"></exception>
+        /// /// ToDo: Этот метод для адммна
         public async Task<SearchResult<CartDTO>> FindAllAsync(PageCriteriaRequest pageCriteriaRequest)
         {
             _logger.LogInformation($"{nameof(FindAllAsync)} run");
@@ -57,7 +64,7 @@ namespace PizzaWebApi.Infrastructure.Services
         /// Get Cart by Id
         /// </summary>
         /// <param name="id">Cart ID</param>
-        /// <returns></returns>
+        /// ToDo: Этот метод для адммна
         public async Task<CartDTO> GetByIdAsync(int id)
         {
             _logger.LogInformation($"{nameof(GetByIdAsync)} run");
@@ -133,13 +140,13 @@ namespace PizzaWebApi.Infrastructure.Services
             {
                 throw new ArgumentException($"Argument Product ID {productId} is wrong");
             }
-            var cartItemIsEsists = await CartItemIsExists(cartId, productId);
+            var cartItemIsExists = await CartItemIsExists(cartId, productId);
 
             try
             {
                 CartItem cartItem;
 
-                if (cartItemIsEsists)
+                if (cartItemIsExists)
                 {
                     _logger.LogDebug($"CartItem Exist add one");
 

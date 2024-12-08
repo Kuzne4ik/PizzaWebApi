@@ -9,6 +9,15 @@ namespace PizzaWebApi.Core.Validators
         {
             RuleFor(c => c.Page).GreaterThan(-1).NotEmpty();
             RuleFor(c => c.PageSize).GreaterThan(-1).NotEmpty();
+
+            // Может быть Empty или Null. Но если есть символ, их должно быть более 3
+            When(c => !string.IsNullOrEmpty(c.Keyword),
+                () =>
+                {
+                    RuleFor(t => t.Keyword)
+                        .MinimumLength(3);
+                }
+            );
         }
     }
 }

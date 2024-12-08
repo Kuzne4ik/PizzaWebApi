@@ -41,10 +41,12 @@ builder.Services
     })
     .AddFluentValidation(fluent =>
     {
-        //Stop validation on first error
+        // Stop validation on first error
         fluent.ValidatorOptions.DefaultClassLevelCascadeMode = CascadeMode.Stop;
-        //Fluent validation only (without MVC validation)
+        // Fluent validation only (without attributes validation)
         fluent.DisableDataAnnotationsValidation = true;
+        // Validate childs
+        fluent.ImplicitlyValidateChildProperties = true;
         // ToDo: Нужно посмотреть
         fluent.LocalizationEnabled = false;
         
@@ -136,8 +138,13 @@ builder.Services.AddScoped<IMapper, ServiceMapper>();
 // Add service health check include SqlServer with EF check
 builder.Services.AddHealthChecks().AddDbContextCheck<AppDbContext>();
 
-// For Angular
+// Разрешить кросдоменное взаимодействие CORS со стороны этого API
+// Браузер отправит "предваоительный" запрос OPTIONS для проверки: разрешено да/нет кросдоменное взаимодействие CORS
+// Необходимо для работы с Angular
 builder.Services.AddCors();
+
+// Использовать специальный HttpClient для Core API IHttpClientFactory
+builder.Services.AddHttpClient();
 
 builder.Services.AddSwaggerGen(options =>
 {
